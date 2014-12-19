@@ -493,10 +493,12 @@ Store = Ember.Object.extend({
     @return {Promise} promise
   */
   fetch: function(type, id, preload) {
-    if (this.hasRecordForId(type, id)) {
-      return this.getById(type, id).reload();
+    var argsLength = arguments.length;
+    if (argsLength > 2 || argsLength === 2 && Ember.typeOf(id) !== 'object') {
+      return this._fetchSingle(type, id, preload);
     } else {
-      return this.find(type, id, preload);
+      throw new Ember.Error("Not implemented yet");
+      //return this._fetchMany(type, id);
     }
   },
 
@@ -516,6 +518,21 @@ Store = Ember.Object.extend({
     var record = this.recordForId(type, id);
 
     return this._findByRecord(record, preload);
+  },
+
+  /**
+    TODO: Document
+  */
+  _fetchMany: function(type, query) {
+    this.findAll();
+  },
+
+  _fetchSingle: function(type, id, preload) {
+    if (this.hasRecordForId(type, id)) {
+      return this.getById(type, id).reload();
+    } else {
+      return this.find(type, id, preload);
+    }
   },
 
   _findByRecord: function(record, preload) {
