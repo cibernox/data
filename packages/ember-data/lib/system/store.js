@@ -497,8 +497,7 @@ Store = Ember.Object.extend({
     if (argsLength > 2 || argsLength === 2 && Ember.typeOf(id) !== 'object') {
       return this._fetchSingle(type, id, preload);
     } else {
-      throw new Ember.Error("Not implemented yet");
-      //return this._fetchMany(type, id);
+      return this._fetchMany(type, id);
     }
   },
 
@@ -524,7 +523,11 @@ Store = Ember.Object.extend({
     TODO: Document
   */
   _fetchMany: function(type, query) {
-    this.findAll();
+    if (query) {
+      return this.findQuery(type, query);
+    } else {
+      return this.findAll(type);
+    }
   },
 
   _fetchSingle: function(type, id, preload) {

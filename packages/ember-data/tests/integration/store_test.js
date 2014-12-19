@@ -207,8 +207,8 @@ test("Using store#fetch on existing record reloads it", function() {
       make: 'BMC',
       model: 'Mini'
     });
-
   });
+
   ajaxResponse({
     cars: [{
       id: 1,
@@ -245,4 +245,78 @@ test("Using store#fetch on non existing record calls find", function() {
       equal(car.get('make'), 'BMCW', 'Car with id=20 is now loaded');
     });
   });
+});
+
+test("Using store#fetch on collection with no records triggers a query", function() {
+  expect(2);
+
+  ajaxResponse({
+    cars: [{
+      id: 1,
+      make: 'BMC',
+      model: 'Mini'
+    },
+    {
+      id: 2,
+      make: 'BMCW',
+      model: 'Isetta'
+    }]
+  });
+
+  var cars = store.all('car');
+  ok(!cars.get('length'), 'There is no cars in the store');
+
+  run(function(){
+    store.fetch('car').then(function(cars) {
+      equal(cars.get('length'), 2, 'Two car were fetched')
+    });
+  });
+});
+
+test("Using store#fetch on collection with existing records performs a query, updating existing records and returning new ones", function() {
+  expect(3);
+
+  run(function(){
+    car = store.push('car', {
+      id: 1,
+      make: 'BMC',
+      model: 'Mini'
+    });
+  });
+
+  ajaxResponse({
+    cars: [{
+      id: 1,
+      make: 'BMC',
+      model: 'New Mini'
+    },
+    {
+      id: 2,
+      make: 'BMCW',
+      model: 'Isetta'
+    }]
+  });
+
+  var cars = store.all('car');
+  equal(cars.get('length'), 1, 'There is one car in the store');
+
+  run(function(){
+    store.fetch('car').then(function(cars) {
+      equal(cars.get('length'), 2, 'There is 2 cars in the store now');
+      var mini = cars.find(function(car){
+        return car.get('id') === 1;
+      });
+      equal(mini.get('model'), 'New Mini', 'Existing records have been updated');
+    });
+  });
+});
+
+test("When is used store#fetch on collection with existing, and the response doesn't contain some of those records, WHAT DO WE DO?!?!?!", function() {
+  // Option 1: Fetch is suposed to refresh collections. If a record is not in the freshly fetched response,
+  //           it is not returned.
+  // Option 2: Fetched is not supposed to be a filter. It refreshes the store and returns whatever is
+  //           in the store after refreshing, including records that are not in the payload anymore.
+  expect(1);
+
+  ok(false, 'TODO: implement');
 });
