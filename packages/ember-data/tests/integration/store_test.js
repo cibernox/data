@@ -320,3 +320,25 @@ test("When is used store#fetch on collection with existing, and the response doe
 
   ok(false, 'TODO: implement');
 });
+
+
+test("When is used store#fetch when called with a query and the store is empty", function() {
+  // It's really different to test("Using store#fetch on collection with no records triggers a query") ???
+  expect(1);
+
+  ok(false, 'TODO: implement');
+});
+
+test("When is used store#fetch when called with a query and the store is contains records", function() {
+  // TODO
+  expect(1);
+
+  ok(false, 'TODO: implement');
+});
+
+test("When is used store#fetch when called with a query and the store is contains records and the response doesn't contain some of those records", function() {
+  // TODO
+  expect(1);
+
+  ok(false, 'TODO: implement');
+});
